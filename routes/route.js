@@ -23,42 +23,49 @@ router.post('/send', sendEmail); //handled at localhost:3001/email/send
 
  function sendEmail(req, res) {
     
+    var header = JSON.parse(JSON.stringify(req.headers));
 
+
+    if(header.authority == "oftwebform")
+    {
+        var name = req.body.name;
+        var email = req.body.email;
+        var message = req.body.message;
     
-    var name = req.body.name;
-    var email = req.body.email;
-    var message = req.body.message;
-
-    //create re usalbe transporter for SMTP
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: config.user,
-            pass: config.password
-        }
-    }) ;
-
-
-    var emailtext = 'This is where you can put your message to email address. \n\n' 
-                    + 'name: ' + name + '\n'
-                    + 'email: ' + email + '\n'
-                    + 'message: ' + message ; 
-    //create email data
-    var mailOptions = {
-        from:'"Contact us" <donotreply@gmail.com>', //senders address
-        to: 'your_message_receiving_email@gmail.com',// list of receivers
-        subject: 'Messgae from Node email service',
-        text: emailtext
-    };
-
-    //send email
-    transporter.sendMail(mailOptions,function(err, info){
-        if (err) {
-            return res.json(err);
-        }
-        //res.json('message sent: ' + info.response);
+        //create re usalbe transporter for SMTP
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: config.user,
+                pass: config.password
+            }
+        }) ;
+    
+    
+        var emailtext = 'This is where you can put your message to email address. \n\n' 
+                        + 'name: ' + name + '\n'
+                        + 'email: ' + email + '\n'
+                        + 'message: ' + message ; 
+        //create email data
+        var mailOptions = {
+            from:'"Contact us" <donotreply@gmail.com>', //senders address
+            to: 'your_message_receiving_email@gmail.com',// list of receivers
+            subject: 'Messgae from Node email service',
+            text: emailtext
+        };
+    
+        //send email
+        transporter.sendMail(mailOptions,function(err, info){
+            if (err) {
+                return res.json(err);
+            }
+            //res.json('message sent: ' + info.response);
+            res.json('message sent' );
+        });
+    } else
+    {
         res.json('message sent' );
-    });
+    }
 
 }
 
